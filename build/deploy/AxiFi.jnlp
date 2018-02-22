@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="AxiFi.jnlp">
+  <information>
+    <title>AxiFi</title>
+    <vendor>CyberDyne</vendor>
+    <description>AxiFi</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="AxiFi.jar" size="143356" download="eager" />
+    <jar href="libs\algs4.jar" size="1995463" download="eager" />
+    <jar href="libs\sqlite-jdbc-3.8.10.1.jar" size="6623425" download="eager" />
+    <jar href="libs\stdlib.jar" size="190490" download="eager" />
+  </resources>
+  <jfx:javafx-desc  width="0" height="0" main-class="application.Main"  name="AxiFi" />
+  <update check="background"/>
+</jnlp>

@@ -20,14 +20,24 @@
 		<mkdir dir="externalLibs" />
 	
 		<copy todir="externalLibs">
-			<fileset dir="F:\cs\umt\ss\AxiFi">
+			<fileset dir="C:\Users\Sean\cs\ss\AxiFi">
 				<filename name="sqlite-jdbc-3.8.10.1.jar"/>
+			</fileset>
+		</copy>
+		<copy todir="externalLibs">
+			<fileset dir="C:\Users\Sean\cs\ss\AxiFi">
+				<filename name="stdlib.jar"/>
+			</fileset>
+		</copy>
+		<copy todir="externalLibs">
+			<fileset dir="C:\Users\Sean\cs\ss\AxiFi">
+				<filename name="algs4.jar"/>
 			</fileset>
 		</copy>
 	
 		<mkdir dir="project" />
 		<copy todir="project">
-			<fileset dir="F:\cs\umt\ss\AxiFi">
+			<fileset dir="C:\Users\Sean\cs\ss\AxiFi">
 				<include name="src/**" />
 			</fileset>
 		</copy>
@@ -43,7 +53,9 @@
 		<!-- Copy project-libs references -->
 		<copy todir="build/libs">
 			<fileset dir="externalLibs">
+				<include name="stdlib.jar"/>
 				<include name="sqlite-jdbc-3.8.10.1.jar"/>
+				<include name="algs4.jar"/>
 			</fileset>
 		</copy>
 	
@@ -134,6 +146,9 @@
 			<fx:resources refid="appRes"/>
 		</fx:deploy>
 	
+		<fx:csstobin outdir="build/classes">
+			<fileset dir="build/classes" includes="**/*.css"/>
+		</fx:csstobin>
 	
 	</target>
 </project>

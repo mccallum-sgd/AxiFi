@@ -20,19 +20,17 @@ public class DatabaseKit {
 	private String fileName;
 	
 	public DatabaseKit() {
-		this.fileName = "data.db";
-		init();
+		init("data.db");
 	}
 	
 	public DatabaseKit(String fileName) {
-		this.fileName = fileName;
-		init();
+		init(fileName);
 	}
 	
 	
 /*--- DATABASE ---------------------------------------------------------------------------*/
 	
-	public void init() {
+	public void init(String fileName) {
 		  //This method will create the database file and the basic schema for the database
 	      try {
 	    	 //Load this class from the build path
@@ -43,7 +41,7 @@ public class DatabaseKit {
 	         //Link a new connection to the database or create a new one if one is not already there
 	         c = DriverManager.getConnection("jdbc:sqlite:" + fileName);
 	         c.setReadOnly(false);
-	         if (dbFileExists)
+	         if (!dbFileExists)
 	        	 buildSchema();
 	         this.fileName = fileName;
 	      } catch ( Exception e ) {
@@ -61,7 +59,7 @@ public class DatabaseKit {
 	
 	public void buildSchema() {
 		//SQL statements
-		String mkUsrTable = "CREATE TABLE USER (" +
+		String mkUsrTable = "CREATE TABLE USER(" +
 				"ID INTEGER PRIMARY KEY AUTOINCREMENT," +
 				"FIRSTNAME TEXT NOT NULL," +
 				"LASTNAME TEXT NOT NULL," +
@@ -82,7 +80,6 @@ public class DatabaseKit {
 							  "FEE REAL NOT NULL," +
 							  "FOREIGN KEY(USER_ID) REFERENCES USER(ID)" + 
 							  ");";
-		//System.out.println(mkUsrTable + mkAdmTable + mkTransTable);
 		
 		try (
 			Statement buildTable = c.createStatement();		
@@ -166,7 +163,7 @@ public class DatabaseKit {
 	
 	public Profile getOwner(Transaction transaction) {
 		Profile user = null;
-		String getUsers = "SELECT * FROM USER WHERE ID=?;";
+		String getUsers = "SELECT * FROM USERSWHERE ID=?;";
 		
 		try {
 			PreparedStatement queryUsers = c.prepareStatement(getUsers);

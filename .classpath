@@ -12,5 +12,7 @@
 		</accessrules>
 	</classpathentry>
 	<classpathentry kind="lib" path="sqlite-jdbc-3.8.10.1.jar"/>
+	<classpathentry kind="lib" path="algs4.jar"/>
+	<classpathentry kind="lib" path="stdlib.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
