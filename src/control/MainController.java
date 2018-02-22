@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import application.Manager.Stages;
@@ -25,9 +26,12 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import model.Autocomplete;
 import model.CsAdmin;
 import model.Profile;
+import model.Term;
 import model.Transaction;
 
 public class MainController extends Controller {
@@ -40,12 +44,15 @@ public class MainController extends Controller {
 
     @FXML private Label balanceLbl, feesLbl;
     
-    @FXML MenuButton accMenuBtn;
-    @FXML MenuItem codes, print, exit, userGuide, allItm;
-    @FXML Button newAccBtn, editAccBtn, delAccBtn, logoutBtn, newTransBtn, editTransBtn;
+    @FXML private MenuButton accMenuBtn;
+    @FXML private MenuItem codes, print, exit, userGuide, allItm;
+    @FXML private Button newAccBtn, editAccBtn, delAccBtn, logoutBtn, newTransBtn, editTransBtn;
+    @FXML private TextField searchFld;
     
     private CsAdmin admin;
     private Profile currAcc;
+    
+    private Autocomplete ac;
     
     private ListChangeListener<Profile> usersListener;
     private ListChangeListener<Transaction> tableListener;
@@ -214,6 +221,19 @@ public class MainController extends Controller {
         amountCol.setCellValueFactory(cellData -> cellData.getValue().getFormattedAmountProperty());
         descripCol.setCellValueFactory(cellData -> cellData.getValue().getDescriptionProperty());
         feeCol.setCellValueFactory(cellData -> cellData.getValue().getFormattedFeeProperty());
+        buildAutocomplete();
+	}
+	
+	//TODO - search and filter table items while typing in search field
+	private void buildAutocomplete() {
+		List<String> temp = new ArrayList<String>();
+		for (Transaction t: table.getItems())
+			temp.add(t.getDescription());
+		
+		Term[] descs = new Term[temp.size()];
+		for (int i = 0; i < descs.length; i++)
+			descs[i] = new Term(temp.get(i), 0);
+		ac = new Autocomplete(descs);
 	}
 	
 /*--- FXML ---------------------------------------------------------------------------*/	
@@ -267,6 +287,18 @@ public class MainController extends Controller {
 	private void exit(ActionEvent e) {
 		System.exit(0);
 	}
+    
+    @FXML
+    private void search(ActionEvent e) {
+    	if (searchFld.getText() != "") {
+    		Term[] matches = ac.allMatches(searchFld.getText());
+    		if (matches.length > 0) {
+    			Transaction t = table.getItems().stream().filter(trans -> trans.getDescription().equals(matches[0].getQuery())).findFirst().orElse(null);
+    			table.getSelectionModel().clearSelection();
+    			table.getSelectionModel().select(t);
+    		} else JOptionPane.showMessageDialog(null, "No transaction found. \n(case-sensitive, prefix matching only)");
+    	}
+    }
     
     /**
      *  @throws IllegalStateException, SecurityException 
