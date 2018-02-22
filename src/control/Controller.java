@@ -23,8 +23,6 @@ public abstract class Controller implements Initializable {
 	
 	static {
 		db = new DatabaseKit();
-		db.init();
-		db.buildSchema();
 	}
 	
 	public void setManager(Manager main)

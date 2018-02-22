@@ -1,5 +1,6 @@
 package model;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -18,25 +19,36 @@ public class DatabaseKit {
 	private Connection c = null;
 	private String fileName;
 	
+	public DatabaseKit() {
+		this.fileName = "data.db";
+		init();
+	}
+	
+	public DatabaseKit(String fileName) {
+		this.fileName = fileName;
+		init();
+	}
+	
 	
 /*--- DATABASE ---------------------------------------------------------------------------*/
 	
-	public void init(String fileName) {
+	public void init() {
 		  //This method will create the database file and the basic schema for the database
 	      try {
 	    	 //Load this class from the build path
 	         Class.forName("org.sqlite.JDBC").newInstance();
+	         boolean dbFileExists = false;
+	         if (new File("data.db").exists()) 
+	        	 dbFileExists = true;
 	         //Link a new connection to the database or create a new one if one is not already there
 	         c = DriverManager.getConnection("jdbc:sqlite:" + fileName);
 	         c.setReadOnly(false);
+	         if (dbFileExists)
+	        	 buildSchema();
 	         this.fileName = fileName;
 	      } catch ( Exception e ) {
 	    	  e.printStackTrace();
 	      }
-	}
-	
-	public void init() {
-	  init("data.db");
 	}
 	
 	public void closeConnection() {
@@ -365,8 +377,6 @@ public class DatabaseKit {
 	// Fake database (and unit testing)
 	public static void main( String args[] ) {
 		DatabaseKit db = new DatabaseKit();
-		db.init();
-		db.buildSchema();
 		db.insertProfile(new Profile(1, "Trish", "Duce", 200.0));
 		db.insertProfile(new Profile(2, "Michael", "Cassens", 200.0));
 		db.insertProfile(new Profile(3, "Oliver", "Serang", 200.0));
