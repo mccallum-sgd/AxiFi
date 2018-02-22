@@ -7,10 +7,10 @@ A financial tracking program.
 
 | OS        | Installer           |
 | ------------- |:-------------:|
-| Windows (.exe)      | [AxiFi.zip](https://github.com/mccallum-sgd/AxiFi/blob/master/build/deploy/bundles/AxiFi-3.0.zip?raw=true) |
+| Windows (.exe)      | [AxiFi.zip](https://github.com/mccallum-sgd/AxiFi/blob/master/releases/AxiFi-3.0.zip?raw=true) |
 | MacOS      | Currently unavailable      |
 | Linux | Currently unavailable       |
-| All (JAR) | [AxiFi.zip](https://github.com/mccallum-sgd/AxiFi/blob/master/build/deploy/AxiFi.zip?raw=true) |
+| All (JAR) | [AxiFi.zip](https://github.com/mccallum-sgd/AxiFi/blob/master/releases/AxiFi.zip?raw=true) |
 
 ## Developers
 

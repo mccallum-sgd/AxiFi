@@ -371,7 +371,7 @@ public class DatabaseKit {
 		return admin;
 	}
 	
-	// Fake database (and unit testing)
+	// Fake database for testing & unit testing
 	public static void main( String args[] ) {
 		DatabaseKit db = new DatabaseKit();
 		db.insertProfile(new Profile(1, "Trish", "Duce", 200.0));
