@@ -16,6 +16,7 @@ tmp/
 # Misc.
 logs.txt
 data.db
+test
 
 # Whitelist
 !/build/build.xml

@@ -16,8 +16,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class DatabaseKit {
-	private Connection c = null;
-	private String fileName;
+	private Connection c;
+	private File dbFile;
 	
 	public DatabaseKit() {
 		init("data.db");
@@ -31,27 +31,38 @@ public class DatabaseKit {
 /*--- DATABASE ---------------------------------------------------------------------------*/
 	
 	public void init(String fileName) {
-		  //This method will create the database file and the basic schema for the database
-	      try {
+        try {
 	    	 //Load this class from the build path
-	         Class.forName("org.sqlite.JDBC").newInstance();
+			Class.forName("org.sqlite.JDBC").newInstance();
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e1) {
+			e1.printStackTrace();
+		}
+        this.dbFile = new File(fileName);
+        openConnection();
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> closeConnection()));
+	}
+	
+	private void openConnection() {
+		 try {
 	         boolean dbFileExists = false;
-	         if (new File("data.db").exists()) 
+	         if (dbFile.exists()) {
 	        	 dbFileExists = true;
+	        	 Security.decrypt(getAdminPw(), dbFile);
+	         }
 	         //Link a new connection to the database or create a new one if one is not already there
-	         c = DriverManager.getConnection("jdbc:sqlite:" + fileName);
+	         c = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getAbsolutePath());
 	         c.setReadOnly(false);
 	         if (!dbFileExists)
 	        	 buildSchema();
-	         this.fileName = fileName;
-	      } catch ( Exception e ) {
+	      } catch (Exception e) {
 	    	  e.printStackTrace();
 	      }
 	}
 	
-	public void closeConnection() {
+	private void closeConnection() {
 		try {
 			c.close();
+			Security.encrypt(getAdminPw(), dbFile);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -363,6 +374,10 @@ public class DatabaseKit {
 			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	public String getAdminPw() {
+		return "csci323";
 	}
 	
 	public CsAdmin getAdmin() {
