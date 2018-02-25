@@ -1,16 +1,24 @@
 # AxiFi (by CyberDyne)
 
-A financial tracking program.
+A financial tracking program. Tracks:
+- Admin account (not implemented -- currently hard-coded)
+    - first name, last name
+    - username, password
+- User accounts
+    - first name, last name
+    - username, password (not implemented)
+    - balance
+- Transactions
+    - date
+    - amount
+    - description
+    - fees (currently hard-coded)
+    - predefined or user-defined id
 
-## Releases (hosted on Google Drive)
-**Latest:**
+All data is stored locally in an SQLite database, which can be optionally encrypted via AES-256 with a separate password.
 
-| OS        | Installer           |
-| ------------- |:-------------:|
-| Windows (.exe)      | [AxiFi.zip](https://github.com/mccallum-sgd/AxiFi/blob/master/releases/AxiFi-3.0.zip?raw=true) |
-| MacOS      | Currently unavailable      |
-| Linux | Currently unavailable       |
-| All (JAR) | [AxiFi.zip](https://github.com/mccallum-sgd/AxiFi/blob/master/releases/AxiFi.zip?raw=true) |
+## Releases
+Releases are hosted on this repository. See the [releases page](https://github.com/mccallum-sgd/AxiFi/releases).
 
 ## Developers
 
@@ -20,6 +28,6 @@ Can be run as a normal Java application in eclipse. The main method is in **Main
 ### Deployment
 This project uses the  [e(fx)clipse](https://www.eclipse.org/efxclipse/index.html) Eclipse extension, and subsequently [Apache Ant](https://ant.apache.org/), to generate various installers for Windows (.exe), MacOS (.dmg), and Linux (.deb).
 
-After installing e(fx)clipse, the installer can be built by opening **build.fxbuild** and clicking "_Generate ant build.xml and run_" in the **Building_Exporting** section on the top right.
+After installing e(fx)clipse, the installer can be built by opening **build.fxbuild** and clicking "_Generate ant build.xml and run_" in the **Building_Exporting** section on the top right (or running the existing Ant build.xml in the build directory).
 
 This will generate the installers in **\build\deploy**.
