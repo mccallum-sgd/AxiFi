@@ -127,7 +127,7 @@ public class Security {
 			write(file, outputBytes);
 		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException
 				| InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
-			System.out.println("Error decrypting file...");
+			Errors.showError("Your database file could not be decrypted. If you're sure you entered the correct key, please submit an issue: https://github.com/mccallum-sgd/AxiFi/issues/new", "Decryption Error");
 			e.printStackTrace();
 		}
 	}

@@ -9,6 +9,8 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import model.DatabaseKit;
+import model.Logger;
+import model.Settings;
 import view.Animations;
 
 public abstract class Controller implements Initializable {

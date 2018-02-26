@@ -15,7 +15,7 @@ A financial tracking program. Tracks:
     - fees (currently hard-coded)
     - predefined or user-defined id
 
-All data is stored locally in an SQLite database, which can be optionally encrypted via AES-256 with a separate password.
+All data is stored locally in an SQLite database, which can be optionally encrypted via AES-256 with a separate password (currently default).
 
 ## Releases
 Releases are hosted on this repository. See the [releases page](https://github.com/mccallum-sgd/AxiFi/releases).

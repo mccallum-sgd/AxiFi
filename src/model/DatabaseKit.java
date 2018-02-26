@@ -1,6 +1,8 @@
 package model;
 
 import java.io.File;
+import java.io.IOException;
+import java.security.AccessControlException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -37,32 +39,59 @@ public class DatabaseKit {
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e1) {
 			e1.printStackTrace();
 		}
-        this.dbFile = new File(fileName);
-        openConnection();
+        
+        setupFile(fileName);
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> closeConnection()));
 	}
 	
-	private void openConnection() {
+	private void setupFile(String fileName) {
+		boolean dbFileExists = false;	
+		String dbLocation = Settings.getSetting("db-location").getStringValue();
+		
+        if (!dbLocation.endsWith("/")) dbLocation += "/";
+        
+        this.dbFile = new File(dbLocation + fileName);
+        
+        if (dbFile.exists()) {
+	       	dbFileExists = true;
+	       	if (Settings.getSetting("db-encrypted").getBooleanValue())
+	       		 Security.decrypt(getAdminPw(), dbFile);
+        } else {
+        	try {
+				dbFile.createNewFile();
+			} catch (IOException e) {
+				if (e.getMessage().endsWith("Access is denied")) {
+		    		  Errors.showError("The directory specified for your database file is not writeable by this program. \n"
+		    				  + "Try running this program as an administrator.\n\nA new database file will now be created in AxiFi's installation directory.\n"
+		    				  + "If you want to use your old database file, please use the Database location setting to move it to a writeable directory (Settings > Database location).", "Access Error");
+		    		  Settings.getSetting("db-location").setStringValue(".");
+		    		  init(fileName);
+		    	  } else if (e.getMessage().endsWith("The system cannot find the file path specified")) {
+		    		  Errors.showError("Your database file could not be found.", "Could not Locate Database File");
+		    	  }
+				e.printStackTrace();
+			}
+        }
+        openConnection(dbFileExists);
+	}
+	
+	private void openConnection(boolean dbFileExists) {
 		 try {
-	         boolean dbFileExists = false;
-	         if (dbFile.exists()) {
-	        	 dbFileExists = true;
-	        	 Security.decrypt(getAdminPw(), dbFile);
-	         }
 	         //Link a new connection to the database or create a new one if one is not already there
-	         c = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getAbsolutePath());
+	         c = DriverManager.getConnection("jdbc:sqlite:" + dbFile);
 	         c.setReadOnly(false);
-	         if (!dbFileExists)
-	        	 buildSchema();
 	      } catch (Exception e) {
 	    	  e.printStackTrace();
 	      }
+		 if (!dbFileExists)
+        	 buildSchema();
 	}
 	
 	private void closeConnection() {
 		try {
 			c.close();
-			Security.encrypt(getAdminPw(), dbFile);
+			if (Settings.getSetting("db-encrypted").getBooleanValue())
+				Security.encrypt(getAdminPw(), dbFile);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -70,19 +99,19 @@ public class DatabaseKit {
 	
 	public void buildSchema() {
 		//SQL statements
-		String mkUsrTable = "CREATE TABLE USER(" +
+		String mkUsrTable = "CREATE TABLE IF NOT EXISTS USER(" +
 				"ID INTEGER PRIMARY KEY AUTOINCREMENT," +
 				"FIRSTNAME TEXT NOT NULL," +
 				"LASTNAME TEXT NOT NULL," +
 				"BALANCE DECIMAL(8,2)" +
 				");";
 		
-		String mkAdmTable = "CREATE TABLE ADMIN(" +
+		String mkAdmTable = "CREATE TABLE IF NOT EXISTS ADMIN(" +
 							"LOGIN CHAR(50) PRIMARY KEY," +
 							"PASSWORD CHAR(50) NOT NULL" +
 							");";
 		
-		String mkTransTable = "CREATE TABLE TRANS(" +
+		String mkTransTable = "CREATE TABLE IF NOT EXISTS TRANS(" +
 							  "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
 							  "DESCRIPTION TEXT," +
 							  "TRANSTIME DATE," + 
@@ -388,6 +417,7 @@ public class DatabaseKit {
 	
 	// Fake database for testing & unit testing
 	public static void main( String args[] ) {
+		Settings.init();
 		DatabaseKit db = new DatabaseKit();
 		db.insertProfile(new Profile(1, "Trish", "Duce", 200.0));
 		db.insertProfile(new Profile(2, "Michael", "Cassens", 200.0));
