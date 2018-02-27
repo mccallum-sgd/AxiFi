@@ -19,6 +19,25 @@
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane fx:id="root" stylesheets="@LightTheme.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="control.MainController">
+	<top>
+		<MenuBar BorderPane.alignment="CENTER">
+			<menus>
+				<Menu mnemonicParsing="false" text="File">
+					<items>
+						<MenuItem fx:id="settings" mnemonicParsing="false" onAction="#settings" text="Settings" />
+						<MenuItem fx:id="print" mnemonicParsing="false" onAction="#print" text="print..." />
+						<MenuItem fx:id="exit" mnemonicParsing="false" onAction="#exit" text="Exit" />
+					</items>
+				</Menu>
+				<Menu mnemonicParsing="false" text="Help">
+					<items>
+						<MenuItem fx:id="userGuide" mnemonicParsing="false" onAction="#codes" text="User Guide" />
+						<MenuItem fx:id="codes" mnemonicParsing="false" onAction="#codes" text="Account Codes" />
+					</items>
+				</Menu>
+			</menus>
+		</MenuBar>
+	</top>
 	<center>
 		<AnchorPane minHeight="600.0" minWidth="600.0" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
 			<children>
@@ -139,22 +158,4 @@
 			</children>
 		</AnchorPane>
 	</center>
-	<top>
-		<MenuBar BorderPane.alignment="CENTER">
-			<menus>
-				<Menu mnemonicParsing="false" text="File">
-					<items>
-						<MenuItem fx:id="print" mnemonicParsing="false" onAction="#print" text="Print" />
-						<MenuItem fx:id="exit" mnemonicParsing="false" onAction="#exit" text="Exit" />
-					</items>
-				</Menu>
-				<Menu mnemonicParsing="false" text="Help">
-					<items>
-						<MenuItem fx:id="userGuide" mnemonicParsing="false" onAction="#codes" text="User Guide" />
-						<MenuItem fx:id="codes" mnemonicParsing="false" onAction="#codes" text="Account Codes" />
-					</items>
-				</Menu>
-			</menus>
-		</MenuBar>
-	</top>
 </BorderPane>

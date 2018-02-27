@@ -60,6 +60,10 @@ public class MainController extends Controller {
     
     @Override
 	public void initialize(URL location, ResourceBundle resources) {
+    	setupFadeIn(root);
+    	setupOnShow(root, (obs, oldScene, newScene) -> {
+    		if (newScene != null) refresh();
+    	});
     	table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     	// setup keyboard commands
     	table.setOnKeyPressed(keyEvt -> {
@@ -85,10 +89,7 @@ public class MainController extends Controller {
     				break;
     		}
     	});
-    	setupFadeIn(root);
-    	setupOnShow(root, (obs, oldScene, newScene) -> {
-    		if (newScene != null) refresh();
-    	});
+    	// Listeners
     	usersListener = new ListChangeListener<Profile>() {
 			@Override
 			public void onChanged(Change<? extends Profile> c) {
@@ -300,11 +301,16 @@ public class MainController extends Controller {
     	}
     }
     
+    @FXML
+    private void settings() {
+    	manager.show(Stages.SETTINGS, Views.SETTINGS);
+    }
+    
     /**
      *  @throws IllegalStateException, SecurityException 
      */
     @FXML
-	public void print() {
+	private void print() {
 		Printer printer = Printer.getDefaultPrinter();
 		PageLayout pageLayout = printer.createPageLayout(Paper.A4, PageOrientation.PORTRAIT,
 				Printer.MarginType.HARDWARE_MINIMUM);

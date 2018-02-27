@@ -13,6 +13,24 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+/**
+ * System for managing the MVC architectural pattern. You can switch controllers and views, show new stages, and send data between controllers.
+ * 
+ * To set up a new Stage, View, and Controller:
+ * <ol>
+ * 	 <li>Create the fxml file with SceneBuilder (or by hand) and place it in the src/views directory.</li>
+ * 	 <li>Create the controller class with an appropriate name in the src/control directory.</li>
+ *   <li>Set the root pane's fx:controller attribute to the previously created controller's fully qualified class name (e.g. <code>fx:controller="control.ExampleController"</code></li>
+ *   <li>Add a new enum to the  Views enum, passing in the file's name.</li>
+ *   <li>Add a case to the switch statement in <code>addStages()</code> defining the setup of your new stage (you can just copy an exisiting configuration). </li>
+ * </ol>
+ * And that's it! You're ready to start coding the controller. If you have any problems, please refer to one of the examples already implemented.
+ * 
+ * Note: some things in the fxml like calling controller methods might give errors: this is because of the way I abstracted the Controller type. But don't worry, it will still work.
+ * 
+ * @author Sean McCallum
+ *
+ */
 public class Manager {
 
 	private ObservableList<Controller> controllers;
@@ -42,7 +60,8 @@ public class Manager {
 		LOGIN, 
 		TRANS, 
 		DEL_ACC,
-		CODES;
+		CODES,
+		SETTINGS;
 	}
 
 	public enum Views {
@@ -51,7 +70,8 @@ public class Manager {
 		MAIN("Main.fxml"), 
 		TRANS("Trans.fxml"), 
 		DEL_ACC("DeleteAcct.fxml"),
-		CODES("Codes.fxml");
+		CODES("Codes.fxml"),
+		SETTINGS("Settings.fxml");
 		private String val;
 
 		private Views(String val) {
@@ -127,6 +147,15 @@ public class Manager {
 					codeStage.setUserData(Stages.CODES);
 					codeStage.initOwner(mainStage);
 					stages.add(codeStage);
+					break;
+				case SETTINGS:
+					Stage settingsStage = new Stage();
+					settingsStage.setMaximized(false);
+					settingsStage.initStyle(StageStyle.TRANSPARENT);
+					settingsStage.sizeToScene();
+					settingsStage.setUserData(Stages.SETTINGS);
+					settingsStage.initOwner(mainStage);
+					stages.add(settingsStage);
 					break;
 			}
 	}

@@ -1,38 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.image.*?>
-<?import javafx.scene.text.*?>
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.SplitMenuButton?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="root" stylesheets="@LightTheme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="control.TransactionController">
+<AnchorPane fx:id="root" prefHeight="700.0" prefWidth="400.0" stylesheets="@LightTheme.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="control.TransactionController">
 	<children>
 		<VBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 			<children>
-				<HBox fx:id="titleBox" alignment="CENTER_RIGHT">
+				<HBox fx:id="titleBox" alignment="CENTER_RIGHT" styleClass="title-bar">
 					<children>
+                  <Label styleClass="label-header" text="New Transaction">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </Label>
+                  <HBox HBox.hgrow="ALWAYS" />
 						<Button fx:id="exitBtn" mnemonicParsing="false" onAction="#exit" prefHeight="30.0" prefWidth="30.0" styleClass="sleek-button" text="x">
-						<tooltip><Tooltip text="exit" /></tooltip>
+						<tooltip>
+                        <Tooltip text="exit" />
+                     </tooltip>
 							<HBox.margin>
-								<Insets top="10.0" />
+								<Insets />
 							</HBox.margin>
 						</Button>
 					</children>
 				</HBox>
 				<MenuButton fx:id="transTypeMenu" alignment="CENTER" mnemonicParsing="false" text="Type of transaction">
-				<tooltip><Tooltip text="Transaction type" /></tooltip>
+				<tooltip>
+                  <Tooltip text="Transaction type" />
+               </tooltip>
 					<items>
 						<MenuItem fx:id="depositItm" mnemonicParsing="false" onAction="#switchTransType" text="Deposit" />
 						<MenuItem fx:id="withdrawItm" mnemonicParsing="false" onAction="#switchTransType" text="Withdrawal" />
@@ -43,7 +48,7 @@
 				</MenuButton>
 				<Label fx:id="dateLbl" text="Date">
 					<VBox.margin>
-						<Insets top="25.0" />
+						<Insets top="20.0" />
 					</VBox.margin>
 				</Label>
 				<DatePicker fx:id="datePicker" maxWidth="250.0" />
@@ -69,30 +74,33 @@
 				</TextField>
             <HBox alignment="CENTER">
                <children>
-                  <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
+                  <VBox alignment="CENTER">
                      <children>
-                        <Label fx:id="codeLbl" text="Account code" VBox.vgrow="ALWAYS">
+                        <Label fx:id="codeLbl" alignment="CENTER" contentDisplay="CENTER" text="Account code">
                            <VBox.margin>
-                              <Insets right="10.0" top="25.0" />
+                              <Insets right="10.0" />
                            </VBox.margin>
                         </Label>
-                        <TextField fx:id="codeFld" maxWidth="200.0" minWidth="200.0" />
+                        <TextField fx:id="codeFld" alignment="CENTER" maxWidth="200.0" minWidth="200.0" />
                      </children>
                      <HBox.margin>
                         <Insets left="180.0" />
                      </HBox.margin>
                   </VBox>
-                  <Button fx:id="codeBtn" minWidth="70.0" mnemonicParsing="false" onAction="#codes" styleClass="sleek-button" text="Codes">
+                  <Button fx:id="codeBtn" alignment="CENTER" contentDisplay="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#codes" styleClass="sleek-button" text="?">
                      <HBox.margin>
-                        <Insets left="10.0" right="150.0" top="20.0" />
+                        <Insets right="145.0" top="20.0" />
                      </HBox.margin>
                   </Button>
                </children>
+               <VBox.margin>
+                  <Insets top="25.0" />
+               </VBox.margin>
             </HBox>
 				<Label fx:id="methodLbl" text="Method">
-					<VBox.margin>
-						<Insets top="40.0" />
-					</VBox.margin>
+               <VBox.margin>
+                  <Insets top="25.0" />
+               </VBox.margin>
 				</Label>
 				<MenuButton fx:id="paymentMenu" mnemonicParsing="false" text="Payment method">
 					<items>
@@ -103,62 +111,72 @@
 						<Insets top="5.0" />
 					</VBox.margin>
 				</MenuButton>
-				<HBox alignment="CENTER">
-					<children>
-						<Label fx:id="actualAmountLbl" prefHeight="20.0" prefWidth="200.0" text="">
-							<HBox.margin>
-								<Insets top="35.0" />
-							</HBox.margin>
-						</Label>
-						<Label fx:id="actualAmountValLbl" prefHeight="20.0" prefWidth="50.0" text="0.0">
-							<HBox.margin>
-								<Insets top="35.0" />
-							</HBox.margin>
-						</Label>
-					</children>
-					<VBox.margin>
-						<Insets />
-					</VBox.margin>
-				</HBox>
-				<HBox alignment="CENTER">
-					<children>
-						<Label fx:id="amountHeldLbl" prefHeight="20.0" prefWidth="200.0" text="Amount held for fees:">
-							<HBox.margin>
-								<Insets top="35.0" />
-							</HBox.margin>
-						</Label>
-						<Label fx:id="amountHeldValLbl" prefHeight="20.0" prefWidth="50.0" text="0.0">
-							<HBox.margin>
-								<Insets top="35.0" />
-							</HBox.margin>
-						</Label>
-					</children>
-					<VBox.margin>
-						<Insets />
-					</VBox.margin>
-				</HBox>
-				<HBox alignment="CENTER">
-					<children>
+            <VBox alignment="CENTER" styleClass="area">
+               <children>
+      				<HBox alignment="CENTER_RIGHT">
+      					<children>
+      						<Label fx:id="actualAmountLbl" prefHeight="20.0" prefWidth="200.0" text="">
+      							<HBox.margin>
+      								<Insets left="20.0" />
+      							</HBox.margin>
+      						</Label>
+      						<Label fx:id="actualAmountValLbl" prefHeight="20.0" prefWidth="50.0" text="0.0">
+      							<HBox.margin>
+      								<Insets />
+      							</HBox.margin>
+      						</Label>
+      					</children>
+      					<VBox.margin>
+      						<Insets bottom="10.0" top="10.0" />
+      					</VBox.margin>
+      				</HBox>
+      				<HBox alignment="CENTER_RIGHT">
+      					<children>
+      						<Label fx:id="amountHeldLbl" prefHeight="20.0" prefWidth="200.0" text="Amount held for fees:">
+      							<HBox.margin>
+      								<Insets left="20.0" />
+      							</HBox.margin>
+      						</Label>
+      						<Label fx:id="amountHeldValLbl" prefHeight="20.0" prefWidth="50.0" text="0.0">
+      							<HBox.margin>
+      								<Insets />
+      							</HBox.margin>
+      						</Label>
+      					</children>
+      					<VBox.margin>
+      						<Insets bottom="10.0" top="10.0" />
+      					</VBox.margin>
+      				</HBox>
+               </children>
+               <VBox.margin>
+                  <Insets left="150.0" right="150.0" top="25.0" />
+               </VBox.margin>
+            </VBox>
+            <HBox VBox.vgrow="ALWAYS">
+               <children>
 						<Button fx:id="submitBtn" mnemonicParsing="false" onAction="#submit" text="Submit">
 							<HBox.margin>
-								<Insets right="75.0" />
+								<Insets left="40.0" />
 							</HBox.margin>
 						</Button>
+                  <HBox HBox.hgrow="ALWAYS" />
 						<Button fx:id="delBtn" mnemonicParsing="false" onAction="#delete" style="-fx-background-color: red; -fx-text-fill: black;" text="Delete">
 							<HBox.margin>
 								<Insets right="0.0" />
 							</HBox.margin>
 						</Button>
+                  <HBox HBox.hgrow="ALWAYS" />
 						<Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#exit" text="Cancel">
 							<HBox.margin>
-								<Insets left="75.0" />
+								<Insets right="40.0" />
 							</HBox.margin>
 						</Button>
-					</children>
-					<VBox.margin>
-						<Insets bottom="10.0" top="25.0" />
-					</VBox.margin>
-				</HBox>
+               </children>
+               <VBox.margin>
+                  <Insets top="25.0" />
+               </VBox.margin>
+            </HBox>
+            <VBox prefHeight="200.0" prefWidth="100.0" />
 			</children>
 		</VBox>
 	</children>
