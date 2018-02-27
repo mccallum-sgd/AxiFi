@@ -1,5 +1,6 @@
 # AxiFi (by CyberDyne)
 
+![AxiFi Logo](src/resources/axifi-logo_small.png?raw=true "AxiFi")
 A financial tracking program. Tracks:
 - Admin account (not implemented -- currently hard-coded)
     - first name, last name
