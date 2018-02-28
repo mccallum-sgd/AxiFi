@@ -86,7 +86,7 @@ public class AccountController extends Controller {
 	private void submit() {
 		if (new Validation<TextField>(firstNameLbl, firstNameFld, 
 				fld -> admin.getUsers().stream().anyMatch(user -> user.getFullName().equalsIgnoreCase(fld.getText())), 
-				"Account already exists. ").test()) {
+				"Account already exists. ").run()) {
 			Profile acc = new Profile(firstNameFld.getText(), lastNameFld.getText(), Double.parseDouble(fundsFld.getText()));
 			admin.getUsers().add(acc);
 			manager.close(Stages.NEW_ACC);

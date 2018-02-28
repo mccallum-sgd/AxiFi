@@ -9,7 +9,7 @@ public class Logger {
 
 	public static void init() {
 		try {
-			File f = new File(Settings.getSetting("Logs", "Logfile Name").getStringValue());
+			File f = new File(Settings.getSetting("logs", "name").getStringValue());
 			if (!f.exists()) f.createNewFile();
 			CopyPrintStream cpStream = new CopyPrintStream(new FileOutputStream(f, false), System.out);
 			System.setOut(cpStream);

@@ -45,7 +45,7 @@ public class DatabaseKit {
 	
 	private void setupFile(String fileName) {
 		boolean dbFileExists = false;	
-		String dbLocation = Settings.getSetting("Database", "Location").getStringValue();
+		String dbLocation = Settings.getSetting("database", "location").getStringValue();
 		
         if (!dbLocation.endsWith("/")) dbLocation += "/";
         
@@ -53,7 +53,7 @@ public class DatabaseKit {
         
         if (dbFile.exists()) {
 	       	dbFileExists = true;
-	       	if (Settings.getSetting("Database", "Database Encrypted").getBooleanValue())
+	       	if (Settings.getSetting("database", "encrypted").getBooleanValue())
 	       		 Security.decrypt(getAdminPw(), dbFile);
         } else {
         	try {
@@ -63,7 +63,7 @@ public class DatabaseKit {
 		    		  Errors.showError("The directory specified for your database file is not writeable by this program. \n"
 		    				  + "Try running this program as an administrator.\n\nA new database file will now be created in AxiFi's installation directory.\n"
 		    				  + "If you want to use your old database file, please use the Database location setting to move it to a writeable directory (Settings > Database location).", "Access Error");
-		    		  Settings.getSetting("Database", "Database Location").setStringValue(".");
+		    		  Settings.getSetting("database", "location").setStringValue(".");
 		    		  init(fileName);
 		    	  } else if (e.getMessage().endsWith("The system cannot find the file path specified")) {
 		    		  Errors.showError("Your database file could not be found.", "Could not Locate Database File");
@@ -89,7 +89,7 @@ public class DatabaseKit {
 	private void closeConnection() {
 		try {
 			c.close();
-			if (Settings.getSetting("Database", "Database Encrypted").getBooleanValue())
+			if (Settings.getSetting("database", "encrypted").getBooleanValue())
 				Security.encrypt(getAdminPw(), dbFile);
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <settings>
-	<category name="Database">
-		<setting name="Database Encryption">
+	<category name="database">
+		<setting name="encrypted">
 			<value possible="true false" input="checkbox">true</value>
 		</setting>
-		<setting name="Database Location">
-			<value possible="any" input="textfield">.</value>
+		<setting name="location">
+			<value possible="any" input="path">.</value>
 		</setting>
 	</category>
-	<category name="Logs">
-		<setting name="Logfile Name">
+	<category name="logs">
+		<setting name="name">
 			<value possible="any" input="textfield">logs.txt</value>
 		</setting>
 	</category>

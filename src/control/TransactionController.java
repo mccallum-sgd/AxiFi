@@ -151,7 +151,7 @@ public class TransactionController extends Controller {
 	}
 	
 	private void computeAmounts(Object src) {
-		if (validations[1].test()) {
+		if (validations[1].run()) {
 			double amt = 0;
 			try {
 				amt = convertAmount(Double.parseDouble(amountFld.getText()));
@@ -252,11 +252,11 @@ public class TransactionController extends Controller {
 				break;
 			case EDIT_MULTI:
 				for (Transaction tran: selections()) {
-					if (validations[0].test())
+					if (validations[0].run())
 						tran.setTime(datePicker.getValue());
-					if (validations[1].test())
+					if (validations[1].run())
 						tran.setAmount(convertAmount(Double.parseDouble(amountFld.getText())));
-					if (validations[2].test())
+					if (validations[2].run())
 						tran.setDescription(descFld.getText());
 				}
 				manager.close(Stages.TRANS);

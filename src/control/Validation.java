@@ -4,13 +4,15 @@ import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.util.Callback;
 import view.Animations;
 
-public class Validation<N extends Node> {
+class Validation<N extends Node> {
 	
 	private Label lbl;
 	private String origTxt,
@@ -19,6 +21,7 @@ public class Validation<N extends Node> {
 	private N n;
 	private List<Predicate<N>> tests;
 	private List<String> errorMsgs;
+	private Consumer<N> callBack;
 	
 /*---------------------------------------------------------------------------*/
 	
@@ -32,9 +35,26 @@ public class Validation<N extends Node> {
 		this.errorMsgs = new ArrayList<String>(Arrays.asList(errorMsg));
 	}
 	
+	Validation(Label lbl, N n, Predicate<N> test, String errorMsg, Consumer<N> callBack) {
+		this.lbl = lbl;
+		origTxt = lbl.getText();
+		origLblStyle = lbl.getStyle();
+		origNStyle = n.getStyle();
+		this.n = n;
+		this.tests = new ArrayList<Predicate<N>>(Arrays.asList(test));
+		this.errorMsgs = new ArrayList<String>(Arrays.asList(errorMsg));
+		this.callBack = callBack;
+	}
+	
 	Validation(N n, Predicate<N> test) {
 		this.n = n;
 		this.tests = new ArrayList<Predicate<N>>(Arrays.asList(test));
+	}
+	
+	Validation(N n, Predicate<N> test, Consumer<N> callBack) {
+		this.n = n;
+		this.tests = new ArrayList<Predicate<N>>(Arrays.asList(test));
+		this.callBack = callBack;
 	}
 	
 	Validation<N> add(Predicate<N> test, String errorMsg) {
@@ -45,7 +65,7 @@ public class Validation<N extends Node> {
 	
 /*---------------------------------------------------------------------------*/
 	
-	boolean test() {
+	boolean run() {
 		boolean pass = true;
 		for (int i = 0; i < tests.size(); i++)
 			if (tests.get(i).test(n)) {
@@ -54,6 +74,8 @@ public class Validation<N extends Node> {
 				pass = false;
 			} else if (errorMsgs != null) 
 				clearError();
+		if (pass && callBack != null) 
+			callBack.accept(n);
 		return pass;
 	}
 	
@@ -86,7 +108,7 @@ public class Validation<N extends Node> {
 		for (Validation<?> v: vs)
 			v.n.focusedProperty().addListener((obs, lost, gained) -> {
 				if (lost)
-					v.test();
+					v.run();
 			});
 	}
 	
@@ -100,9 +122,17 @@ public class Validation<N extends Node> {
 	static boolean run(Validation<?>... vs) {
 		boolean pass = true;
 		for (Validation<?> v: vs)
-			if (!v.test())
+			if (!v.run())
 				pass = false;
 			else v.clearError();
+		return pass;
+	}
+	
+	static boolean matchValues(String value, List<String> possibleVals) {
+		boolean pass = true;
+		for (String p: possibleVals)
+			if (!p.equals(value))
+				pass = false;
 		return pass;
 	}
 }

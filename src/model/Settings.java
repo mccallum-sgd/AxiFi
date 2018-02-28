@@ -12,8 +12,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.StringJoiner;
 
 import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
@@ -35,13 +36,15 @@ import org.xml.sax.SAXException;
 public class Settings {
 	private static String xmlFile = "settings.xml";
 	private static Document xmlDoc;
-	private static final Settings thiz = new Settings();
+	private static final Settings thiz = new Settings();  // For instantiation of inner classes
 	
 	private static ArrayList<SettingCategory> settings;
 	
 	public enum Input {
-		STRING("String"),
-		BOOLEAN("boolean");
+		FIELD("textfield"),
+		CHECKBOX("checkbox"),
+		COMBO("combobox"),
+		PATH("path");
 		private String val;
 		private Input(String val) {
 			this.val = val;
@@ -73,12 +76,33 @@ public class Settings {
 		public void setSettings(List<Setting> settings) {this.settings = settings;}
 		
 		public Setting getSetting(String name) {
-			return settings.get(Collections.binarySearch(settings, new Setting(name, "", null, null)));
+			try {
+				return settings.get(Collections.binarySearch(settings, new Setting(name, "", null, null)));
+			} catch (ArrayIndexOutOfBoundsException e) {
+				settings.forEach(s -> System.out.println(s.name));
+				throw new NoSuchElementException("No such setting in cateogry " + this.name + ": " + name);
+			}
 		}
 
 		@Override
 		public int compareTo(SettingCategory o) {
 			return this.name.compareTo(o.getName());
+		}
+		
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			sb.append("[");
+			boolean first = true;
+			for (Setting s: settings)
+				if (first) {
+					first = false;
+					sb.append(s);
+				} else {
+					sb.append(s);
+					sb.append("\n");
+				}
+			sb.append("]");
+			return sb.toString();
 		}
 	}
 	
@@ -107,14 +131,18 @@ public class Settings {
 			replaceXmlValue(this, String.valueOf(value));
 			this.value = String.valueOf(value);
 		}
-		private void setValue(String value) {this.value = value;}
 		public String getStringValue() {return value;}
 		public Boolean getBooleanValue() {return new Boolean(value);}
 		public List<String> getPossibleVals() {return possibleVals;}
+		public String getPossibleValsString() {
+			StringJoiner join = new StringJoiner(", ");
+			possibleVals.forEach(p -> join.add(p));
+			return join.toString();
+		}
 		public Input getType() {return type;}
 		
 		public String toString() {
-			return "[" + name + "=" + value + "]";
+			return name + ", " + value + ", " + possibleVals + ", " + type.val();
 		}
 
 		@Override
@@ -139,9 +167,16 @@ public class Settings {
 	}
 	
 	public static Setting getSetting(String category, String name) {
-		int cat = Collections.binarySearch(settings, thiz.new SettingCategory(name, new ArrayList<Setting>()));
-		return settings.get(cat).getSetting(name);
+		int cat = 0;
+		try {
+			cat = Collections.binarySearch(settings, thiz.new SettingCategory(category, new ArrayList<Setting>()));
+			return settings.get(cat).getSetting(name);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			throw new NoSuchElementException("No such setting category: " + category);
+		}
 	}
+	
+	public static List<SettingCategory> getSettingCategories() { return settings; }
 	
 	private static void createDOM() {
 		try {
