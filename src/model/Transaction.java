@@ -1,109 +1,118 @@
 package model;
 
-import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Observable;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class Transaction extends Observable {
+	private StringProperty ownerName;
+	private StringProperty name; //PRIMARY KEY
+	private StringProperty description;
+	private ObjectProperty<LocalDate> time; 
+	private DoubleProperty amount;
+	private DoubleProperty fee;
 	
-	private int id;
-	private int userID;
-	private LocalDate time;
-	private double amount;
-	private String description;
-	private double fees;
+	public final SimpleDateFormat dFormat = new SimpleDateFormat("");
 	
-	public Transaction(int userID, LocalDate time, String description, double amount, double fees) {
-		super();
-		this.userID = userID;
-		this.time = time;
-		this.amount = amount;
-		this.description = description;
-		this.fees = fees;
-	}
-	
-	public Transaction(int id, int userID, LocalDate time, String description, double amount, double fees) {
-		super();
-		this.id = id;
-		this.userID = userID;
-		this.time = time;
-		this.amount = amount;
-		this.description = description;
-		this.fees = fees;
+	public Transaction(String ownerUsername, String name, String description, LocalDate time, double amount, double fees) {
+		this.ownerName = new SimpleStringProperty(ownerUsername);
+		this.name = new SimpleStringProperty(name);
+		this.description = new SimpleStringProperty(description);
+		this.time = new SimpleObjectProperty<LocalDate>(time);
+		this.amount = new SimpleDoubleProperty(amount);
+		this.fee = new SimpleDoubleProperty(fees);
 	}
 
-	public StringProperty getTimeProperty() {
-		return new SimpleStringProperty(time.toString());
+	//GETTERS
+	public String getOwnerName() {
+		return ownerName.getValue();
 	}
 	
-	public LocalDate getTime() {
-		return time;
-	}
-
-	public void setTime(LocalDate time) {
-		this.time = time;
-	}
-	
-	public void setTime(String time) {
-		this.time = LocalDate.parse(time);
-	}
-
-	public StringProperty getAmountProperty() {
-		return new SimpleStringProperty(String.valueOf(amount));
-	}
-	
-	public StringProperty getFormattedAmountProperty() {
-		return new SimpleStringProperty(DecimalFormat.getCurrencyInstance().format(amount));
-	}
-	
-	public double getAmount() {
-		return amount;
-	}
-
-	public void setAmount(double amount) {
-		this.amount = amount;
-	}
-
-	public StringProperty getDescriptionProperty() {
-		return new SimpleStringProperty(description);
+	public String getName() {
+		return name.getValue();
 	}
 	
 	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
+		return description.getValue();
 	}
 	
-	@Override
-	public String toString() {
-		return "Transaction [id=" + id + ", userID=" + userID + ", time=" + time + ", amount=" + amount
-				+ ", description=" + description + ", fees=" + fees + "]";
-	}
-
-	public int getID() {
-		return id;
+	public LocalDate getTime() {
+		return time.getValue();
 	}
 	
-	public int getUserID() {
-		return userID;
+	public double getAmount() {
+		return amount.doubleValue();
 	}
 	
 	public double getFee() {
-		return fees;
+		return fee.doubleValue();
 	}
 	
 	public double getFeeAmount() {
-		return fees * amount;
+		return fee.doubleValue() * amount.doubleValue();
 	}
 	
-	public StringProperty getFormattedFeeProperty() {
-		return new SimpleStringProperty(DecimalFormat.getCurrencyInstance().format(getFeeAmount()));
+	//PROPERTIES
+	public StringProperty ownerNameProperty() {
+		return ownerName;
+	}
+	
+	public StringProperty nameProperty() {
+		return name;
+	}
+	
+	public StringProperty descriptionProperty() {
+		return description;
+	}
+	
+	public ObjectProperty<LocalDate> timeProperty() {
+		return time;
 	}
 
+	public DoubleProperty amountProperty() {
+		return amount;
+	}
+	
+	public DoubleProperty feeProperty() {
+		return fee;
+	}
+	
+	//SETTERS
+	public void setOwnerName(String ownerName) {
+		this.ownerName.setValue(ownerName);
+	}
+	
+	public void setName(String name) {
+		this.name.setValue(name);
+	}
+	
+	public void setDescription(String description) {
+		this.description.setValue(description);
+	}
+	
+	public void setTime(LocalDate time) {
+		try {
+			this.time.setValue(dFormat.parse(time.toString()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+		} catch (ParseException e) {
+			throw new IllegalArgumentException("LocalDate is not of the required format.");
+		}
+	}
+
+	public void setAmount(double amount) {
+		this.amount.setValue(amount);
+	}
+	
+	public void setFee(double fee) {
+		this.fee.setValue(fee);
+	}
 	
 }

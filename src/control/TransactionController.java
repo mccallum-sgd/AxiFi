@@ -19,8 +19,8 @@ import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import model.Profile;
 import model.Transaction;
+import model.User;
 
 public class TransactionController extends Controller {
 	
@@ -39,7 +39,7 @@ public class TransactionController extends Controller {
 	@FXML private DatePicker datePicker;
 	
 	private TableViewSelectionModel<Transaction> selection;
-	private Profile owner;
+	private User owner;
 	private Modes mode;
 	
 	private double fees;
@@ -104,16 +104,16 @@ public class TransactionController extends Controller {
 			manager.close(Stages.TRANS);
 			break;
 		case 1:
-			if (data[0] != null && data[0] instanceof Profile) {
-				owner = (Profile) data[0];
+			if (data[0] != null && data[0] instanceof User) {
+				owner = (User) data[0];
 				setMode(Modes.NEW);
 			}
 			break;
 		case 2:
 			if (data[0] != null && data[0] instanceof TableViewSelectionModel &&
-			data[1] != null && data[1] instanceof Profile) {
+			data[1] != null && data[1] instanceof User) {
 				selection = (TableViewSelectionModel<Transaction>) data[0];
-				owner = (Profile) data[1];
+				owner = (User) data[1];
 				if (selections().size() > 1)
 					setMode(Modes.EDIT_MULTI);
 				else if (selections().size() == 1)
@@ -138,7 +138,7 @@ public class TransactionController extends Controller {
 		else switchTransType(new ActionEvent(depositItm, null));
 		
 		datePicker.setValue(selection().getTime());
-		amountFld.setText(selection().getAmountProperty().getValue());
+		amountFld.setText(selection().amountProperty().getValue());
 		
 		descFld.setText(selection().getDescription());
 	}
@@ -232,13 +232,12 @@ public class TransactionController extends Controller {
 			case NEW:
 				if (Validation.run(validations)) {
 					Transaction newTrans = new Transaction(
-							owner.getId(),
 							datePicker.getValue(),
 							descFld.getText(),
 							convertAmount(Double.parseDouble(amountFld.getText())),
 							fees
 						);
-					owner.getTransactions().add(newTrans);
+					owner.addTransaction(newTrans);
 					manager.close(Stages.TRANS);
 				}
 				break;

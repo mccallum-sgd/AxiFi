@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -50,7 +48,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class Security {
 	
-	private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
+	private static final String ALGORITHM = "AES/CBC/PKCS7Padding"; // https://goo.gl/k4zYhN
 	private static final int IV_BYTES = 16;
 	private static final int SALT_BYTES = 16;
 	private static final int PBE_ITERATIONS = 65536;

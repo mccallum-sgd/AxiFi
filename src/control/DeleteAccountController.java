@@ -11,7 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import model.CsAdmin;
-import model.Profile;
+import model.User;
 import view.Animations;
 
 public class DeleteAccountController extends Controller {
@@ -22,7 +22,7 @@ public class DeleteAccountController extends Controller {
 	@FXML TextField adminPwFld;
 	@FXML Button delBtn, cancelBtn, exitBtn;
 	private CsAdmin admin;
-	private Profile acc;
+	private User acc;
 	
 /*--- SETUP ---------------------------------------------------------------------------*/
 	
@@ -50,8 +50,8 @@ public class DeleteAccountController extends Controller {
 	@Override
 	public void receiveData(Object... data) {
 		admin = (CsAdmin) data[0];
-		acc = (Profile) data[1];
-		if (acc.getTransactions().isEmpty())
+		acc = (User) data[1];
+		if (acc.queryTransactions().isEmpty())
 			promptLbl.setText("Are you sure you want to delete " + acc.getFullName() + "'s account? (Warning: all account data will be lost!)");
 		else {
 			promptLbl.setText("Cannot delete account with transaction data. ");
@@ -73,7 +73,7 @@ public class DeleteAccountController extends Controller {
 	@FXML
 	private void submit() {
 		if (Validation.run(validations)) {
-			admin.getUsers().remove(acc);
+			admin.queryUsers().remove(acc);
 			manager.close(Stages.DEL_ACC);
 		} else
 			Animations.shake(manager.getStage(Stages.DEL_ACC));

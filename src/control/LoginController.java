@@ -41,9 +41,9 @@ public class LoginController extends Controller {
 /*--- HELPERS ---------------------------------------------------------------------------*/	
 	
 	private CsAdmin authenticate() {
-		CsAdmin admin = db.getAdmin();
+		CsAdmin admin = db.getCurrAdmin();
 		validations = new Validation<?>[] {
-			new Validation<TextField>(loginLbl, usernameFld, fld -> !admin.getLogin().equals(fld.getText()), "Invalid login."),
+			new Validation<TextField>(loginLbl, usernameFld, fld -> !admin.getUsername().equals(fld.getText()), "Invalid login."),
 			new Validation<TextField>(loginLbl, passwordFld, fld -> !admin.getPassword().equals(fld.getText()), "Invalid login.")
 		};
 		if (Validation.run(validations))

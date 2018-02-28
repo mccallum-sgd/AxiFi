@@ -29,10 +29,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import model.Autocomplete;
-import model.CsAdmin;
-import model.Profile;
 import model.Term;
 import model.Transaction;
+import model.User;
 
 public class MainController extends Controller {
 	
@@ -49,12 +48,9 @@ public class MainController extends Controller {
     @FXML private Button newAccBtn, editAccBtn, delAccBtn, logoutBtn, newTransBtn, editTransBtn;
     @FXML private TextField searchFld;
     
-    private CsAdmin admin;
-    private Profile currAcc;
-    
     private Autocomplete ac;
     
-    private ListChangeListener<Profile> usersListener;
+    private ListChangeListener<User> usersListener;
     private ListChangeListener<Transaction> tableListener;
 /*--- SETUP ---------------------------------------------------------------------------*/	
     
@@ -65,21 +61,11 @@ public class MainController extends Controller {
     	table.setOnKeyPressed(keyEvt -> {
     		switch (keyEvt.getCode()) {
 	    		case ENTER:
-	    			if (editTransBtn.isVisible() && !editTransBtn.isDisabled())
+	    			if (!editTransBtn.isDisabled())
 	    				editTransactions();
 	    			break;
     			case DELETE:
-    				if (editTransBtn.isArmed() && !editTransBtn.isDisabled())
-	    				if (currAcc != null)
-	    					currAcc.getTransactions().removeAll(table.getSelectionModel().getSelectedItems());
-	    				else {
-	    					for (Profile p: admin.getUsers())
-	    						p.getTransactions().removeAll(table.getSelectionModel().getSelectedItems());
-	    				}
-    				break;
-    			case ADD:
-    				if (newTransBtn.isArmed() && !newTransBtn.isDisabled())
-    					newTransaction(new ActionEvent(new Object(), null));
+	    			db.getAllTransactions().removeAll(table.getSelectionModel().getSelectedItems());
     				break;
     			default:
     				break;
@@ -89,21 +75,19 @@ public class MainController extends Controller {
     	setupOnShow(root, (obs, oldScene, newScene) -> {
     		if (newScene != null) refresh();
     	});
-    	usersListener = new ListChangeListener<Profile>() {
+    	usersListener = new ListChangeListener<User>() {
 			@Override
-			public void onChanged(Change<? extends Profile> c) {
+			public void onChanged(Change<? extends User> c) {
 				while (c.next()) {
 					if (c.wasRemoved()) {
-						List<Profile> removed = (List<Profile>) c.getRemoved();
-						for (Profile r: removed)
+						List<User> removed = (List<User>) c.getRemoved();
+						for (User r: removed)
 							accMenuBtn.getItems().removeIf(a -> a.getText().equals(r.getFullName()));
-						db.deleteProfiles(removed);
 						switchAccounts(null);
 						refresh();
 					}
 					if (c.wasAdded()) {
-						addAccounts(false, (List<Profile>) c.getAddedSubList());
-						db.insertProfiles((List<Profile>) c.getAddedSubList());
+						addAccounts(false, (List<User>) c.getAddedSubList());
 						refresh();
 					}
 				}
@@ -112,16 +96,9 @@ public class MainController extends Controller {
 		tableListener = new ListChangeListener<Transaction> () {
 			@Override
 			public void onChanged(Change<? extends Transaction> c) {
-				while (c.next()) {
-					if (c.wasAdded()) {
-						db.insertTransactions((List<Transaction>)c.getAddedSubList());
+				while (c.next())
+					if (c.wasAdded() || c.wasRemoved())
 						refresh();
-					}
-					if (c.wasRemoved()) {
-						db.deleteTransactions((List<Transaction>)c.getRemoved());
-						refresh();
-					}
-				}
 			}
 		};
 	}
@@ -154,18 +131,17 @@ public class MainController extends Controller {
 	}
     
     public void refresh() {
-    	admin = db.getAdmin();
 		showAccounts();
 		table.refresh();
     }
 	
     // Add accounts to menu button and setup changelisteners
 	private void showAccounts() {
-		admin.getUsers().removeListener(usersListener);
-		admin.getUsers().addListener(usersListener);
-		if (!admin.getUsers().isEmpty())
+		db.get.removeListener(usersListener);
+		admin.queryUsers().addListener(usersListener);
+		if (!admin.queryUsers().isEmpty())
 			accMenuBtn.getItems().clear();
-		addAccounts(true, admin.getUsers());
+		addAccounts(true, admin.queryUsers());
 		if (currAcc == null) {
 			accMenuBtn.setText(allItm.getText());
 			switchAccounts(null);
@@ -173,7 +149,7 @@ public class MainController extends Controller {
 	}
 	
 	// Switch data & UI
-	private void switchAccounts(Profile user) {
+	private void switchAccounts(User user) {
 		if (user != null) {
 			enable(true, delAccBtn, editAccBtn, newTransBtn, editTransBtn);
 	    	accMenuBtn.setText(user.getFullName());
@@ -188,7 +164,7 @@ public class MainController extends Controller {
     }
 	
 	// Add buttons
-	private void addAccounts(boolean clear, List<Profile> accs) {
+	private void addAccounts(boolean clear, List<User> accs) {
 		if (clear) accMenuBtn.getItems().clear();
 		if (!accMenuBtn.getItems().contains(allItm)) {
 			allItm.setOnAction(e -> switchAccounts(null));
@@ -208,19 +184,19 @@ public class MainController extends Controller {
 	// Set table items
 	private void showTransactions() {
 		if (currAcc != null) {
-			table.setItems(currAcc.getTransactions());
+			table.setItems(currAcc.queryTransactions());
 			userCol.setVisible(false);
 		} else {
-			table.setItems(db.getTransactions()); //Overview
+			table.setItems(db.queryTransactions()); //Overview
 			userCol.setVisible(true);
 			userCol.setCellValueFactory(cellData -> new SimpleStringProperty(db.getOwner(cellData.getValue()).getFullName()));
 		}
 		table.getItems().removeListener(tableListener);
 		table.getItems().addListener(tableListener);
-		dateCol.setCellValueFactory(cellData -> cellData.getValue().getTimeProperty());
-        amountCol.setCellValueFactory(cellData -> cellData.getValue().getFormattedAmountProperty());
-        descripCol.setCellValueFactory(cellData -> cellData.getValue().getDescriptionProperty());
-        feeCol.setCellValueFactory(cellData -> cellData.getValue().getFormattedFeeProperty());
+		dateCol.setCellValueFactory(cellData -> cellData.getValue().timeProperty());
+        amountCol.setCellValueFactory(cellData -> cellData.getValue().formattedAmountProperty());
+        descripCol.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
+        feeCol.setCellValueFactory(cellData -> cellData.getValue().getFormattedFeesProperty());
         buildAutocomplete();
 	}
 	

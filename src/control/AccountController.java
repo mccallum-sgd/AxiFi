@@ -11,7 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import model.CsAdmin;
-import model.Profile;
+import model.User;
 
 public class AccountController extends Controller {
 	
@@ -22,7 +22,7 @@ public class AccountController extends Controller {
 	@FXML private Button submitBtn, cancelBtn;
 	
 	private CsAdmin admin;
-	private Profile acc;
+	private User acc;
 	
 	private Mode mode;
 	
@@ -45,7 +45,7 @@ public class AccountController extends Controller {
 	public void receiveData(Object... data) {
 		admin = (CsAdmin) data[0];
 		if (data.length > 1) {
-			acc = (Profile) data[1];
+			acc = (User) data[1];
 			setMode(Mode.EDIT);
 		}
 	}
@@ -85,10 +85,10 @@ public class AccountController extends Controller {
 	@FXML
 	private void submit() {
 		if (new Validation<TextField>(firstNameLbl, firstNameFld, 
-				fld -> admin.getUsers().stream().anyMatch(user -> user.getFullName().equalsIgnoreCase(fld.getText())), 
+				fld -> admin.queryUsers().stream().anyMatch(user -> user.getFullName().equalsIgnoreCase(fld.getText())), 
 				"Account already exists. ").test()) {
-			Profile acc = new Profile(firstNameFld.getText(), lastNameFld.getText(), Double.parseDouble(fundsFld.getText()));
-			admin.getUsers().add(acc);
+			User acc = new User(firstNameFld.getText(), lastNameFld.getText(), Double.parseDouble(fundsFld.getText()));
+			admin.queryUsers().add(acc);
 			manager.close(Stages.NEW_ACC);
 		}
 	}
